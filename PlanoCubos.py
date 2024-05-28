@@ -112,7 +112,7 @@ def Init():
     
     Texturas(filename1)
     for i in range(ncubos):
-        cubos.append(Cubo(DimBoard, 1.0))  
+        cubos.append(Cubo(DimBoard, 1.0, 11))  
     
 def display():
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT)
@@ -125,7 +125,9 @@ def display():
     glVertex3d(DimBoard, 0, DimBoard)
     glVertex3d(DimBoard, 0, -DimBoard)
     glEnd()
-    plataforma.drawCube(textures, 0)
+    for plataforma in listacubos:
+        plataforma.drawCube(textures,0)
+    # plataforma.drawCube(textures, 0)
     #Se dibuja cubos
     for obj in cubos:
         obj.drawCube(textures,0)
@@ -140,15 +142,20 @@ def rotating(theta):
     newdir = [(newx),CENTER_Y,(newz)]
     return newdir
     
+    
 # Crear una instancia de Cubo para la plataforma
-plataforma = Cubo(5, 0.0)  # Ajusta los parámetros según sea necesario
+plataforma = Cubo(5, 0.0, 6)  # Ajusta los parámetros según sea necesario
 plataforma.Position = [10, 0, 20]  # Posición de la plataforma en el mundo
+plataforma2 = Cubo(5, 0.0, 11)  # Ajusta los parámetros según sea necesario
+plataforma2.Position = [20, 6, 30]  # Posición de la plataforma en el mundo
+listacubos = [plataforma, plataforma2]
 
 jump_speed = 0.4  # Velocidad del salto predeterminada
 gravity = 0.009  # Velocidad de la gravedad para poder lograr el descenso suave, se lo voy restando al salto
 on_ground = True # is jumping pero mi lógica me puso mejor a detectar el suelo equide
 y_velocity = 0 # en vez de restar dos valores diferentes, sí se pudo con el mismo valor al volverlo negativo
 done = False
+pr = plataforma
 Init()
 while not done:
     newdir = []
@@ -216,23 +223,28 @@ while not done:
     
     player_pos = [EYE_X, EYE_Y, EYE_Z]  # Tracking del jugador
     
-    # Lógica de colisión con la plataforma
-    if math.sqrt((plataforma.Position[0] - player_pos[0])**2 + (plataforma.Position[2] - player_pos[2])**2) < 10.0:
-        if EYE_Y < 6:  # Altura de la plataforma
-            # El personaje choca con la plataforma
-            EYE_X = last_position[0]  # Restablece a la última posición segura
-            EYE_Z = last_position[2]
-            CENTER_X = EYE_X
-            CENTER_Z = EYE_Z
-        else:
-            # El personaje está sobre la plataforma
-            preEyeY = 11
-    else: #el personaje sale del área de colisión de la plataforma
-        if EYE_Y > 6:  # Altura de la plataforma
-            # El personaje cae de la plataforma
-            on_ground = False
-            preEyeY = 5
-
+    for obj in listacubos:
+        # Lógica de colisión con la plataforma
+        if math.sqrt((obj.Position[0] - player_pos[0])**2 + (obj.Position[2] - player_pos[2])**2) < 10.0:
+            if EYE_Y < obj.height:  # Altura de la plataforma
+                # El personaje choca con la plataforma
+                EYE_X = last_position[0]  # Restablece a la última posición segura
+                EYE_Z = last_position[2]
+                CENTER_X = EYE_X
+                CENTER_Z = EYE_Z
+                print('FUAaaaaaaaaaaaaaaaaaa')
+            else:
+                # El personaje está sobre la plataforma
+                pr = obj
+                preEyeY = obj.height + 5
+                print('FUuuuuuuuuuuuUUUUUUUUUUUUUUUUUUUUUUUU')
+        elif (math.sqrt((pr.Position[0] - player_pos[0])**2 + (pr.Position[2] - player_pos[2])**2) > 10): #el personaje sale del área de colisión de la plataforma
+            if EYE_Y > obj.height:  # Altura de la plataforma
+                # El personaje cae de la plataforma
+                on_ground = False
+                preEyeY = 5
+                print('qqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqq')
+    print(EYE_Y)
     # Dentro del ciclo while not done:
     cubos[1].chase_player(player_pos, 0.001)
     if cubos[1].check_collision(player_pos):

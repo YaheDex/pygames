@@ -12,7 +12,7 @@ import numpy as np
 
 class Cubo:
     
-    def __init__(self, dim, vel):
+    def __init__(self, dim, vel, height):
         #Se inicializa las coordenadas de los vertices del cubo
         self.points = np.array([[-1.0,-1.0, 1.0], [1.0,-1.0, 1.0], [1.0,-1.0,-1.0], [-1.0,-1.0,-1.0],
                                 [-1.0, 1.0, 1.0], [1.0, 1.0, 1.0], [1.0, 1.0,-1.0], [-1.0, 1.0,-1.0]])
@@ -35,6 +35,7 @@ class Cubo:
         #Se cambia la maginitud del vector direccion
         self.Direction[0] *= vel
         self.Direction[2] *= vel
+        self.height = height
         
     def drawFace(self, x1, y1, z1, x2, y2, z2, x3, y3, z3, x4, y4, z4):
         glBegin(GL_QUADS)
