@@ -12,18 +12,14 @@ import numpy as np
 
 class Cubo:
     
-    def __init__(self, dim, vel):
+    def __init__(self, dim, vel, x, y, z):
         #Se inicializa las coordenadas de los vertices del cubo
         self.points = np.array([[-1.0,-1.0, 1.0], [1.0,-1.0, 1.0], [1.0,-1.0,-1.0], [-1.0,-1.0,-1.0],
                                 [-1.0, 1.0, 1.0], [1.0, 1.0, 1.0], [1.0, 1.0,-1.0], [-1.0, 1.0,-1.0]])
 
         self.DimBoard = dim
         #Se inicializa una posicion aleatoria en el tablero
-        self.Position = []
-        self.Position.append(-200)
-        self.Position.append(5.0)
-        self.Position.append(200)
-        #Se inicializa un vector de direccion aleatorio
+        self.Position = [x, y, z]
         self.Direction = []
         self.Direction.append(random.random())
         self.Direction.append(5.0)

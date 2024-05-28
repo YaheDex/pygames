@@ -48,8 +48,8 @@ DimBoard = 200
 
 #Variables asociados a los objetos de la clase Cubo
 #cubo = Cubo(DimBoard, 1.0)
-cubos = []
-ncubos = 2
+global cubos
+cubos = [Cubo(DimBoard, 1, 200, 5, 0), Cubo(DimBoard, 0, DimBoard, 2.5, DimBoard), Cubo(DimBoard, 0, DimBoard-10, 2, DimBoard)]
 global jugador
 jugador = Player()
 
@@ -112,8 +112,6 @@ def Init():
     glPolygonMode(GL_FRONT_AND_BACK, GL_FILL)
     
     Texturas(filename1)
-    for i in range(ncubos):
-        cubos.append(Cubo(DimBoard, 1.0))  
     
 def display():
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT)
@@ -127,9 +125,9 @@ def display():
     glVertex3d(DimBoard, 0, -DimBoard)
     glEnd()
     jugador.update()
-    #Se dibuja cubos
-    # for obj in cubos:
-    #     obj.drawCube(textures,0)
+    # Se dibuja cubos
+    for obj in cubos:
+        obj.drawCube(textures,0)
         
 
 
@@ -138,18 +136,23 @@ Init()
 while not done:
     
     for event in pygame.event.get():
+        if event.type == pygame.KEYDOWN:
+            if event.key == pygame.K_ESCAPE:
+                done = True
+
         if event.type == pygame.QUIT:
             done = True    
-            
-    # player_pos = [EYE_X, EYE_Y, EYE_Z]  
+    
 
-    # cubos[1].chase_player(player_pos, 0.1)
-    # if cubos[1].check_collision(player_pos):
-    #         print("¡Has perdido!")
-    #         done = True
-            # break
+    cubos[0].chase_player(jugador.Position, 0.2)
+    if cubos[0].check_collision(jugador.Position):
+            print("¡Has perdido!")
+            done = True
+            break
     glLoadIdentity()
-    gluLookAt(jugador.Position[0], jugador.Position[1], jugador.Position[2], jugador.Position[0]+jugador.newDir[0] , jugador.Position[1] ,jugador.Position[2]+jugador.newDir[2],UP_X,UP_Y,UP_Z)         
+    verX = jugador.Position[0]+jugador.newDir[0]
+    verZ = jugador.Position[2]+jugador.newDir[2]
+    gluLookAt(jugador.Position[0], jugador.Position[1], jugador.Position[2], verX, jugador.Position[1], verZ, UP_X,UP_Y,UP_Z)         
     display()
 
     pygame.display.flip()
