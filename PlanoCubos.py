@@ -201,12 +201,13 @@ while not done:
         EYE_Y += y_velocity
         CENTER_Y += y_velocity
         y_velocity -= gravity
-        # print(EYE_Y) # usado para depuración
+        # print("EQUISDE") # usado para depuración
         if EYE_Y <= preEyeY:  # En vez de fijar una altura máxima y mínima para cuando llegue al suelo, sólo un if que en cuanto
             EYE_Y = preEyeY   # detecte la altura del jugador, se reestablezca todo
             CENTER_Y = EYE_Y
             on_ground = True
             y_velocity = 0
+            # print('DEPURASAO')
            
     for event in pygame.event.get():
         if event.type == pygame.KEYDOWN:
@@ -225,7 +226,6 @@ while not done:
             CENTER_Z = EYE_Z
         else:
             # El personaje está sobre la plataforma
-            on_ground = False
             preEyeY = 11
     else: #el personaje sale del área de colisión de la plataforma
         if EYE_Y > 6:  # Altura de la plataforma
