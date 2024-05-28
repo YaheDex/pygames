@@ -233,12 +233,13 @@ while not done:
                 CENTER_X = EYE_X
                 CENTER_Z = EYE_Z
                 print('FUAaaaaaaaaaaaaaaaaaa')
-            else:
+            elif obj.height <= EYE_Y <= (obj.height+5):
                 # El personaje está sobre la plataforma
                 pr = obj
                 preEyeY = obj.height + 5
                 print('FUuuuuuuuuuuuUUUUUUUUUUUUUUUUUUUUUUUU')
-        elif (math.sqrt((pr.Position[0] - player_pos[0])**2 + (pr.Position[2] - player_pos[2])**2) > 10): #el personaje sale del área de colisión de la plataforma
+        elif (math.sqrt((pr.Position[0] - player_pos[0])**2 + (pr.Position[2] - player_pos[2])**2) >= 10): #el personaje sale del área de colisión de la plataforma
+            print("WOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOO")
             if EYE_Y > obj.height:  # Altura de la plataforma
                 # El personaje cae de la plataforma
                 on_ground = False
