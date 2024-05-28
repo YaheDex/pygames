@@ -14,7 +14,7 @@ sys.path.append('..')
 from Cubo import Cubo
 from Player import Player
 
-filename1 = "Ejemplo8_observadorFPV_v2\danp.jpg"
+filename1 = "danp.jpg"
 textures = []
 screen_width = 800
 screen_height = 800
@@ -23,7 +23,6 @@ FOVY=60.0
 ZNEAR=1.0
 ZFAR=900.0
 #Variables para definir la posicion del observador
-#gluLookAt(EYE_X,EYE_Y,EYE_Z,CENTER_X,CENTER_Y,CENTER_Z,UP_X,UP_Y,UP_Z)
 EYE_X = 0.0
 EYE_Y = 5.0
 EYE_Z = 0.0
@@ -46,13 +45,13 @@ Z_MIN=-500
 Z_MAX=500
 #Dimension del plano
 DimBoard = 200
-#Variable de control observador
-dir = [1.0, 0.0, 0.0]
 
 #Variables asociados a los objetos de la clase Cubo
 #cubo = Cubo(DimBoard, 1.0)
 cubos = []
 ncubos = 2
+global jugador
+jugador = Player()
 
 #Variables para el control del observador
 theta = 0.0
@@ -127,6 +126,7 @@ def display():
     glVertex3d(DimBoard, 0, DimBoard)
     glVertex3d(DimBoard, 0, -DimBoard)
     glEnd()
+    jugador.update()
     #Se dibuja cubos
     # for obj in cubos:
     #     obj.drawCube(textures,0)
@@ -137,7 +137,10 @@ done = False
 Init()
 while not done:
     
-
+    for event in pygame.event.get():
+        if event.type == pygame.QUIT:
+            done = True    
+            
     # player_pos = [EYE_X, EYE_Y, EYE_Z]  
 
     # cubos[1].chase_player(player_pos, 0.1)
@@ -145,10 +148,11 @@ while not done:
     #         print("¡Has perdido!")
     #         done = True
             # break
-    
+    glLoadIdentity()
+    gluLookAt(jugador.Position[0], jugador.Position[1], jugador.Position[2], jugador.Position[0]+jugador.newDir[0] , jugador.Position[1] ,jugador.Position[2]+jugador.newDir[2],UP_X,UP_Y,UP_Z)         
     display()
 
     pygame.display.flip()
-    pygame.time.wait(100)
+    pygame.time.wait(10)
 
 pygame.quit()
