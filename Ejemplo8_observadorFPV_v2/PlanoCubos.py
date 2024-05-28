@@ -12,8 +12,9 @@ import math
 import sys
 sys.path.append('..')
 from Cubo import Cubo
+from Player import Player
 
-filename1 = "Ejemplo8_observadorFPV_v2/Ejemplo8_observadorFPV_v2/danp.jpg"
+filename1 = "Ejemplo8_observadorFPV_v2\danp.jpg"
 textures = []
 screen_width = 800
 screen_height = 800
@@ -127,86 +128,27 @@ def display():
     glVertex3d(DimBoard, 0, -DimBoard)
     glEnd()
     #Se dibuja cubos
-    for obj in cubos:
-        obj.drawCube(textures,0)
+    # for obj in cubos:
+    #     obj.drawCube(textures,0)
         
-def rotating(theta):
-    global dir
-    global CENTER_Y
-    global EYE_X
-    global EYE_Z
-    newx = dir[0]*math.cos(math.radians(theta)) + math.sin(math.radians(theta))*dir[2]
-    newz = dir[0]*math.sin(math.radians(theta)) + math.cos(math.radians(theta))*dir[2]
-    newdir = [(newx),CENTER_Y,(newz)]
-    return newdir
+
 
 done = False
 Init()
 while not done:
-    keys = pygame.key.get_pressed()
-    if keys[pygame.K_UP]:
-            newdir = rotating(theta)
-            EYE_X = EYE_X + newdir[0]
-            EYE_Z = EYE_Z + newdir[2]
-            CENTER_X = EYE_X + newdir[0]
-            CENTER_Z = EYE_Z + newdir[2]
-            glLoadIdentity()
-            gluLookAt(EYE_X,EYE_Y,EYE_Z,CENTER_X,CENTER_Y,CENTER_Z,UP_X,UP_Y,UP_Z)        
-    if keys[pygame.K_DOWN]:
-            newdir = rotating(theta)
-            EYE_X = EYE_X - newdir[0]
-            EYE_Z = EYE_Z - newdir[2]
-            CENTER_X = EYE_X + newdir[0]
-            CENTER_Z = EYE_Z + newdir[2]
-            glLoadIdentity()
-            gluLookAt(EYE_X,EYE_Y,EYE_Z,CENTER_X,CENTER_Y,CENTER_Z,UP_X,UP_Y,UP_Z)
-    if keys[pygame.K_RIGHT]:
-            theta+=1
-            newdir = rotating(theta)
-            CENTER_X = EYE_X + newdir[0]
-            CENTER_Z = EYE_Z + newdir[2]
-            glLoadIdentity()
-            gluLookAt(EYE_X,EYE_Y,EYE_Z,CENTER_X,CENTER_Y,CENTER_Z,UP_X,UP_Y,UP_Z)
-    if keys[pygame.K_LEFT]:
-            theta-=1
-            newdir = rotating(theta)
-            CENTER_X = EYE_X + newdir[0]
-            CENTER_Z = EYE_Z + newdir[2]
-            glLoadIdentity()
-            gluLookAt(EYE_X,EYE_Y,EYE_Z,CENTER_X,CENTER_Y,CENTER_Z,UP_X,UP_Y,UP_Z)
-    if keys[pygame.K_SPACE] and not is_jumping:
-        is_jumping = True
-        jump_height = 5.0  # Ajusta este valor según la altura que desees para el salto
+    
 
-    if is_jumping:
-        print(jump_height)
-        if jump_height > 0:
-            EYE_Y += jump_height * 0.1  # Ajusta este valor para controlar la velocidad del salto
-            CENTER_Y += jump_height * 0.1
-            jump_height -= 0.01  # Ajusta este valor para controlar la velocidad de caída
-        else:
-            is_jumping = False
-            EYE_Y = 5.0  # Restablece la altura original del jugador
-            CENTER_Y = 5.0
+    # player_pos = [EYE_X, EYE_Y, EYE_Z]  
 
-           
-    for event in pygame.event.get():
-        if event.type == pygame.KEYDOWN:
-            if event.key == pygame.K_ESCAPE:
-                done = True
-
-    player_pos = [EYE_X, EYE_Y, EYE_Z]  # Asegúrate de actualizar esta posición según la lógica de tu jugador
-
-    # Dentro del ciclo while not done:
-    cubos[1].chase_player(player_pos, 0.1)
-    if cubos[1].check_collision(player_pos):
-            print("¡Has perdido!")
-            done = True
-            break
+    # cubos[1].chase_player(player_pos, 0.1)
+    # if cubos[1].check_collision(player_pos):
+    #         print("¡Has perdido!")
+    #         done = True
+            # break
     
     display()
 
     pygame.display.flip()
-    pygame.time.wait(10)
+    pygame.time.wait(100)
 
 pygame.quit()
