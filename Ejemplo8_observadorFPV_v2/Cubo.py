@@ -12,14 +12,18 @@ import numpy as np
 
 class Cubo:
     
-    def __init__(self, dim, vel, x, y, z):
+    def __init__(self, dim, vel, height):
         #Se inicializa las coordenadas de los vertices del cubo
         self.points = np.array([[-1.0,-1.0, 1.0], [1.0,-1.0, 1.0], [1.0,-1.0,-1.0], [-1.0,-1.0,-1.0],
                                 [-1.0, 1.0, 1.0], [1.0, 1.0, 1.0], [1.0, 1.0,-1.0], [-1.0, 1.0,-1.0]])
 
         self.DimBoard = dim
         #Se inicializa una posicion aleatoria en el tablero
-        self.Position = [x, y, z]
+        self.Position = []
+        self.Position.append(-200)
+        self.Position.append(5.0)
+        self.Position.append(200)
+        #Se inicializa un vector de direccion aleatorio
         self.Direction = []
         self.Direction.append(random.random())
         self.Direction.append(5.0)
@@ -31,24 +35,8 @@ class Cubo:
         #Se cambia la maginitud del vector direccion
         self.Direction[0] *= vel
         self.Direction[2] *= vel
+        self.height = height
         
-
-    def update(self):
-        new_x = self.Position[0] + self.Direction[0]
-        new_z = self.Position[2] + self.Direction[2]
-        
-        if(abs(new_x) <= self.DimBoard):
-            self.Position[0] = new_x
-        else:
-            self.Direction[0] *= -1.0
-            self.Position[0] += self.Direction[0]
-        
-        if(abs(new_z) <= self.DimBoard):
-            self.Position[2] = new_z
-        else:
-            self.Direction[2] *= -1.0
-            self.Position[2] += self.Direction[2]
-
     def drawFace(self, x1, y1, z1, x2, y2, z2, x3, y3, z3, x4, y4, z4):
         glBegin(GL_QUADS)
         glTexCoord2f(0.0, 0.0)
