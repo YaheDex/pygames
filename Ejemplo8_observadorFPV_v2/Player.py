@@ -81,6 +81,7 @@ class Player:
                         self.preEyeY = 5
                         print('qqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqq')
                         self.pr = None
+        
 
                     
                     

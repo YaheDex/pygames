@@ -37,7 +37,8 @@ class Cubo:
         self.Direction[2] *= vel
         self.height = height
         
-    def drawFace(self, x1, y1, z1, x2, y2, z2, x3, y3, z3, x4, y4, z4):
+    def drawFace(self, x1, y1, z1, x2, y2, z2, x3, y3, z3, x4, y4, z4, color):
+        glColor3f(color[0],color[1],color[2])
         glBegin(GL_QUADS)
         glTexCoord2f(0.0, 0.0)
         glVertex3f(x1, y1, z1)
@@ -49,7 +50,7 @@ class Cubo:
         glVertex3f(x4, y4, z4)
         glEnd()
     
-    def drawCube(self, texture, id):
+    def drawCube(self, texture, id, color):
         glPushMatrix()
         glTranslatef(self.Position[0], self.Position[1], self.Position[2])
         glScaled(5,5,5)
@@ -58,19 +59,19 @@ class Cubo:
         glEnable(GL_TEXTURE_2D)
         #up face
         glBindTexture(GL_TEXTURE_2D, texture[id])
-        self.drawFace(-1.0, 1.0, 1.0, -1.0, 1.0, -1.0, 1.0, 1.0, -1.0, 1.0, 1.0, 1.0)
+        self.drawFace(-1.0, 1.0, 1.0, -1.0, 1.0, -1.0, 1.0, 1.0, -1.0, 1.0, 1.0, 1.0, color)
         #front face
         glBindTexture(GL_TEXTURE_2D, texture[id])
-        self.drawFace(-1.0, 1.0, 1.0, -1.0, -1.0, 1.0, 1.0, -1.0, 1.0, 1.0, 1.0, 1.0)
+        self.drawFace(-1.0, 1.0, 1.0, -1.0, -1.0, 1.0, 1.0, -1.0, 1.0, 1.0, 1.0, 1.0, color)
         #right face
         glBindTexture(GL_TEXTURE_2D, texture[id])
-        self.drawFace(1.0, 1.0, 1.0, 1.0, -1.0, 1.0, 1.0, -1.0, -1.0, 1.0, 1.0, -1.0)
+        self.drawFace(1.0, 1.0, 1.0, 1.0, -1.0, 1.0, 1.0, -1.0, -1.0, 1.0, 1.0, -1.0, color)
         #back face
         glBindTexture(GL_TEXTURE_2D, texture[id])
-        self.drawFace(1.0, 1.0, -1.0, -1.0, 1.0, -1.0, -1.0, -1.0, -1.0, 1.0, -1.0, -1.0)
+        self.drawFace(1.0, 1.0, -1.0, -1.0, 1.0, -1.0, -1.0, -1.0, -1.0, 1.0, -1.0, -1.0, color)
         #left face
         glBindTexture(GL_TEXTURE_2D, texture[id])
-        self.drawFace(-1.0, 1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, 1.0, -1.0, 1.0, 1.0)
+        self.drawFace(-1.0, 1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, 1.0, -1.0, 1.0, 1.0, color)
         glDisable(GL_TEXTURE_2D)
         glPopMatrix()
 
