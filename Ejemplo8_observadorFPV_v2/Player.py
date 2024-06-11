@@ -38,10 +38,10 @@ class Player:
             self.Position[0] -= self.newDir[0]
             self.Position[2] -= self.newDir[2]
         if keys[pygame.K_d]:
-            self.theta += 2.5
+            self.theta += 4
             self.newDir = self.rotating()
         if keys[pygame.K_a]:
-            self.theta -= 2.5
+            self.theta -= 4
             self.newDir = self.rotating()
         if keys[pygame.K_SPACE] and self.on_ground:
             self.preEyeY = self.Position[1]

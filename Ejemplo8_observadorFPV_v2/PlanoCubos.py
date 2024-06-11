@@ -135,8 +135,8 @@ done = False
 Init()
 global balas
 balas = []
-boom = pygame.mixer.Sound("Ejemplo8_observadorFPV_v2/disparo.mp3")
-hit = pygame.mixer.Sound("Ejemplo8_observadorFPV_v2/hitmarker.mp3")
+boom = pygame.mixer.Sound("disparo.mp3")
+hit = pygame.mixer.Sound("hitmarker.mp3")
 
 
 
@@ -150,7 +150,7 @@ while not done:
         if event.type == pygame.MOUSEBUTTONDOWN:
             if event.button == 1:
                 boom.play()
-                balas.append(Bala(1.2, jugador.Position, jugador.newDir))
+                balas.append(Bala(2.5, jugador.Position, jugador.newDir))
         
                 
     # voy a hacer un for para verificar las balas q siguen vivas equisdé
@@ -163,13 +163,13 @@ while not done:
         
     if not cooldown:
         cooldown = 10
-        contar = False   
+        contar = False    
             
     glLoadIdentity()
     verX = jugador.Position[0] + jugador.newDir[0]
     verZ = jugador.Position[2] + jugador.newDir[2]
     gluLookAt(jugador.Position[0], jugador.Position[1], jugador.Position[2], verX, jugador.Position[1], verZ, UP_X, UP_Y, UP_Z)
-    dansito.chase_player(jugador.Position, 0.6)
+    dansito.chase_player(jugador.Position, 0.7)
     if dansito:
         if dansito.check_collision(jugador.Position):
                 print("¡Has perdido!")
