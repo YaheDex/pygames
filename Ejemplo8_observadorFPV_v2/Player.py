@@ -20,7 +20,7 @@ class Player:
         self.pr = None
         self.maxBalas = 10
         self.currentBalas = 10
-        self.coolReload = 150
+        self.coolReload = 100
         self.isReloading = False
 
     def rotating(self):
@@ -73,7 +73,7 @@ class Player:
             
         if self.coolReload <= 0:
             self.isReloading = False
-            self.coolReload = 150   
+            self.coolReload = 100   
             self.currentBalas = self.maxBalas
             
 
@@ -86,20 +86,16 @@ class Player:
                     # El personaje choca con la plataforma
                     self.Position[0] = self.prevPos[0]  # Restablece a la última posición segura
                     self.Position[2] = self.prevPos[2]
-                    print('FUAaaaaaaaaaaaaaaaaaa')
                 elif obj.height <= self.Position[1] <= (obj.height+5):
                     # El personaje está sobre la plataforma
                     self.pr = obj
                     self.preEyeY = obj.height + 5
-                    print('FUuuuuuuuuuuuUUUUUUUUUUUUUUUUUUUUUUUU')
             elif (self.pr != None):
                 if (math.sqrt((self.pr.Position[0] - self.Position[0])**2 + (self.pr.Position[2] - self.Position[2])**2) >= 10): #el personaje sale del área de colisión de la plataforma
-                    print("WOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOO")
                     if self.Position[1] > obj.height:  # Altura de la plataforma
                         # El personaje cae de la plataforma
                         self.on_ground = False
                         self.preEyeY = 5
-                        print('qqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqq')
                         self.pr = None
         
 

@@ -7,11 +7,12 @@ sys.path.append('..')
 from Cubo import Cubo
 from Player import Player
 from bala import Bala
+from evilDan import evilDan
 
 filename1 = "danp.jpg"
 textures = []
-screen_width = 800
-screen_height = 800
+screen_width = 700
+screen_height = 700
 FOVY = 60.0
 ZNEAR = 1.0
 ZFAR = 900.0
@@ -34,7 +35,7 @@ Y_MAX = 500
 Z_MIN = -500
 Z_MAX = 500
 DimBoard = 200
-dansito = Cubo(DimBoard, 1.0, 11)
+dansito = evilDan(DimBoard, 250)
 jugador = Player()
 pygame.init()
 pygame.mixer.init()
@@ -97,6 +98,40 @@ def Init():
     glPolygonMode(GL_FRONT_AND_BACK, GL_FILL)
     Texturas(filename1)
 
+
+def render_text(text, x, y):
+    img = pygame.font.Font(None, 40).render(text, True, (255, 255, 255))
+    w, h = img.get_size()
+    texture = glGenTextures(1)
+    glPixelStorei(GL_UNPACK_ALIGNMENT, 1)
+    glBindTexture(GL_TEXTURE_2D, texture)
+    glTexParameter(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST)
+    glTexParameter(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST)
+    data = pygame.image.tostring(img, "RGBA", 1)
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, w, h, 0, GL_RGBA, GL_UNSIGNED_BYTE, data)
+    
+    glEnable(GL_BLEND)
+    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA)
+    glEnable(GL_TEXTURE_2D)
+    glBindTexture(GL_TEXTURE_2D, texture)
+    
+    glColor3f(1, 1, 1)
+    glBegin(GL_QUADS)
+    glTexCoord2f(0, 1)
+    glVertex2f(x, y)
+    glTexCoord2f(1, 1)
+    glVertex2f(x + w, y)
+    glTexCoord2f(1, 0)
+    glVertex2f(x + w, y + h)
+    glTexCoord2f(0, 0)
+    glVertex2f(x, y + h)
+    glEnd()
+    
+    glDisable(GL_TEXTURE_2D)
+    glDisable(GL_BLEND)
+    
+    glDeleteTextures([int(texture)])
+
 def display():
     global contar
     
@@ -116,36 +151,24 @@ def display():
     for plataforma in listacubos:
         plataforma.drawCube(textures, 0, [255, 255, 255])
     
-    if not contar:
-        dansito.drawCube(textures, 0, [255, 255, 255])
-    else:
-        dansito.drawCube(textures, 0, [255, 0, 0])
+    if dansito:
+        if not contar:
+            dansito.drawCube(textures, 0, [255, 255, 255])
+        else:
+            dansito.drawCube(textures, 0, [255, 0, 0])
     
     for obj in balas:
         obj.drawBala()
         obj.update()
-        if obj.checkCol(dansito):
-            print("le pegaste a dan")
-            contar = True
-            hit.play()
-            obj.vive = False
+        if dansito:
+            if obj.checkCol(dansito):
+                dansito.health -= 10
+                contar = True
+                hit.play()
+                obj.vive = False
+    
     
     # Render 2D text
-    if not jugador.isReloading and jugador.currentBalas:
-        img = pygame.font.Font(None, 50).render(f"Balas: {jugador.currentBalas} / {jugador.maxBalas}", True, (255, 255, 255))
-    elif not jugador.isReloading and not jugador.currentBalas:
-        img = pygame.font.Font(None, 50).render(f"Balas: {jugador.currentBalas} / {jugador.maxBalas} R para recargar", True, (255, 255, 255))
-    else:
-        img = pygame.font.Font(None, 50).render(f"Recargando...   {jugador.coolReload}", True, (255, 255, 255))
-    w, h = img.get_size()
-    texture = glGenTextures(1)
-    glPixelStorei(GL_UNPACK_ALIGNMENT, 1)
-    glBindTexture(GL_TEXTURE_2D, texture)
-    glTexParameter(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST)
-    glTexParameter(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST)
-    data = pygame.image.tostring(img, "RGBA", 1)
-    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, w, h, 0, GL_RGBA, GL_UNSIGNED_BYTE, data)
-    
     glMatrixMode(GL_PROJECTION)
     glPushMatrix()
     glLoadIdentity()
@@ -154,32 +177,22 @@ def display():
     glPushMatrix()
     glLoadIdentity()
 
-    glEnable(GL_BLEND)
-    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA)
-    glEnable(GL_TEXTURE_2D)
-    glBindTexture(GL_TEXTURE_2D, texture)
+    if not jugador.isReloading and jugador.currentBalas:
+        render_text(f"Balas: {jugador.currentBalas} / {jugador.maxBalas}", 10, screen_height - 30)
+    elif not jugador.isReloading and not jugador.currentBalas:
+        render_text(f"Balas: {jugador.currentBalas} / {jugador.maxBalas} R para recargar", 10, screen_height - 30)
+    else:
+        render_text(f"Recargando...   {jugador.coolReload}", 10, screen_height - 30)
     
-    glColor3f(1, 1, 1)
-    glBegin(GL_QUADS)
-    glTexCoord2f(0, 1)
-    glVertex2f(10, 10)
-    glTexCoord2f(1, 1)
-    glVertex2f(10 + w, 10)
-    glTexCoord2f(1, 0)
-    glVertex2f(10 + w, 10 + h)
-    glTexCoord2f(0, 0)
-    glVertex2f(10, 10 + h)
-    glEnd()
-    
-    glDisable(GL_TEXTURE_2D)
-    glDisable(GL_BLEND)
-    
+    if dansito:
+        render_text(f"Vida de Dan Evil Perez: {dansito.health}", (screen_width ) // 2 - 150, 10)
+    else:
+        render_text("Has salvado al mundo de la invasión", (screen_width ) // 2 - 150, 10)
+        
     glMatrixMode(GL_PROJECTION)
     glPopMatrix()
     glMatrixMode(GL_MODELVIEW)
     glPopMatrix()
-    
-    glDeleteTextures([int(texture)])
 
 
 done = False
@@ -217,12 +230,15 @@ while not done:
     verX = jugador.Position[0] + jugador.newDir[0]
     verZ = jugador.Position[2] + jugador.newDir[2]
     gluLookAt(jugador.Position[0], jugador.Position[1], jugador.Position[2], verX, jugador.Position[1], verZ, UP_X, UP_Y, UP_Z)
-    dansito.chase_player(jugador.Position, 0.7)
     if dansito:
+        dansito.chase_player(jugador.Position, 0.8)
         if dansito.check_collision(jugador.Position):
             print("¡Has perdido!")
             done = True
             break
+        if not dansito.vive:
+            dansito = None
+        
     
     display()
     pygame.display.flip()
