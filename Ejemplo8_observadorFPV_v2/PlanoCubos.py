@@ -2,7 +2,6 @@ import pygame
 from pygame.locals import *
 from OpenGL.GL import *
 from OpenGL.GLU import *
-from OpenGL.GLUT import *
 import sys
 sys.path.append('..')
 from Cubo import Cubo
@@ -35,18 +34,16 @@ Y_MAX = 500
 Z_MIN = -500
 Z_MAX = 500
 DimBoard = 200
-# cubos = [Cubo(DimBoard, 1, 200, 5, 0), Cubo(DimBoard, 0, DimBoard, 2.5, DimBoard), Cubo(DimBoard, 0, DimBoard-10, 2, DimBoard)]
 dansito = Cubo(DimBoard, 1.0, 11)
 jugador = Player()
 pygame.init()
 pygame.mixer.init()
 
-plataforma = Cubo(5, 0.0, 6)  # Ajusta los parámetros según sea necesario
-plataforma.Position = [10, 0, 20]  # Posición de la plataforma en el mundo
-plataforma2 = Cubo(5, 0.0, 11)  # Ajusta los parámetros según sea necesario
-plataforma2.Position = [20, 6, 30]  # Posición de la plataforma en el mundo
+plataforma = Cubo(5, 0.0, 6)
+plataforma.Position = [10, 0, 20]
+plataforma2 = Cubo(5, 0.0, 11)
+plataforma2.Position = [20, 6, 30]
 listacubos = [plataforma, plataforma2]
-
 
 cooldown = 10
 global contar
@@ -102,7 +99,10 @@ def Init():
 
 def display():
     global contar
+    
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT)
+    
+    # Render 3D scene
     Axis()
     glColor3f(0.3, 0.3, 0.3)
     glBegin(GL_QUADS)
@@ -121,7 +121,6 @@ def display():
     else:
         dansito.drawCube(textures, 0, [255, 0, 0])
     
-    
     for obj in balas:
         obj.drawBala()
         obj.update()
@@ -130,6 +129,58 @@ def display():
             contar = True
             hit.play()
             obj.vive = False
+    
+    # Render 2D text
+    if not jugador.isReloading and jugador.currentBalas:
+        img = pygame.font.Font(None, 50).render(f"Balas: {jugador.currentBalas} / {jugador.maxBalas}", True, (255, 255, 255))
+    elif not jugador.isReloading and not jugador.currentBalas:
+        img = pygame.font.Font(None, 50).render(f"Balas: {jugador.currentBalas} / {jugador.maxBalas} R para recargar", True, (255, 255, 255))
+    else:
+        img = pygame.font.Font(None, 50).render(f"Recargando...   {jugador.coolReload}", True, (255, 255, 255))
+    w, h = img.get_size()
+    texture = glGenTextures(1)
+    glPixelStorei(GL_UNPACK_ALIGNMENT, 1)
+    glBindTexture(GL_TEXTURE_2D, texture)
+    glTexParameter(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST)
+    glTexParameter(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST)
+    data = pygame.image.tostring(img, "RGBA", 1)
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, w, h, 0, GL_RGBA, GL_UNSIGNED_BYTE, data)
+    
+    glMatrixMode(GL_PROJECTION)
+    glPushMatrix()
+    glLoadIdentity()
+    glOrtho(0, screen_width, screen_height, 0, -1, 1)
+    glMatrixMode(GL_MODELVIEW)
+    glPushMatrix()
+    glLoadIdentity()
+
+    glEnable(GL_BLEND)
+    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA)
+    glEnable(GL_TEXTURE_2D)
+    glBindTexture(GL_TEXTURE_2D, texture)
+    
+    glColor3f(1, 1, 1)
+    glBegin(GL_QUADS)
+    glTexCoord2f(0, 1)
+    glVertex2f(10, 10)
+    glTexCoord2f(1, 1)
+    glVertex2f(10 + w, 10)
+    glTexCoord2f(1, 0)
+    glVertex2f(10 + w, 10 + h)
+    glTexCoord2f(0, 0)
+    glVertex2f(10, 10 + h)
+    glEnd()
+    
+    glDisable(GL_TEXTURE_2D)
+    glDisable(GL_BLEND)
+    
+    glMatrixMode(GL_PROJECTION)
+    glPopMatrix()
+    glMatrixMode(GL_MODELVIEW)
+    glPopMatrix()
+    
+    glDeleteTextures([int(texture)])
+
 
 done = False
 Init()
@@ -137,8 +188,6 @@ global balas
 balas = []
 boom = pygame.mixer.Sound("disparo.mp3")
 hit = pygame.mixer.Sound("hitmarker.mp3")
-
-
 
 while not done:
     for event in pygame.event.get():
@@ -148,23 +197,22 @@ while not done:
         if event.type == pygame.QUIT:
             done = True
         if event.type == pygame.MOUSEBUTTONDOWN:
-            if event.button == 1:
+            if event.button == 1 and jugador.currentBalas > 0:
+                jugador.currentBalas -= 1
                 boom.play()
                 balas.append(Bala(2.5, jugador.Position, jugador.newDir))
-        
-                
-    # voy a hacer un for para verificar las balas q siguen vivas equisdé
+    
     for obj in balas:
         if not obj.vive:
-            balas.remove(obj)    
+            balas.remove(obj)
     
     if contar:
         cooldown -= 1
-        
+    
     if not cooldown:
         cooldown = 10
-        contar = False    
-            
+        contar = False
+    
     glLoadIdentity()
     verX = jugador.Position[0] + jugador.newDir[0]
     verZ = jugador.Position[2] + jugador.newDir[2]
@@ -172,9 +220,9 @@ while not done:
     dansito.chase_player(jugador.Position, 0.7)
     if dansito:
         if dansito.check_collision(jugador.Position):
-                print("¡Has perdido!")
-                done = True
-                break
+            print("¡Has perdido!")
+            done = True
+            break
     
     display()
     pygame.display.flip()

@@ -18,6 +18,10 @@ class Player:
         self.prevPos = []
         self.preEyeY = 0
         self.pr = None
+        self.maxBalas = 10
+        self.currentBalas = 10
+        self.coolReload = 150
+        self.isReloading = False
 
     def rotating(self):
         dir = [1.0, 0.0, 0.0]
@@ -33,20 +37,25 @@ class Player:
             self.newDir = self.rotating()
             self.Position[0] += self.newDir[0]
             self.Position[2] += self.newDir[2]
+            
         if keys[pygame.K_s]:
             self.newDir = self.rotating()
             self.Position[0] -= self.newDir[0]
             self.Position[2] -= self.newDir[2]
+            
         if keys[pygame.K_d]:
             self.theta += 4
             self.newDir = self.rotating()
+            
         if keys[pygame.K_a]:
             self.theta -= 4
             self.newDir = self.rotating()
+            
         if keys[pygame.K_SPACE] and self.on_ground:
             self.preEyeY = self.Position[1]
             self.on_ground = False
             self.y_velocity = self.jump_speed
+            
         if not self.on_ground:
             self.Position[1] += self.y_velocity
             self.y_velocity -= self.gravity
@@ -56,6 +65,17 @@ class Player:
                 self.on_ground = True
                 self.y_velocity = 0
                 # print('DEPURASAO')
+        if self.currentBalas < self.maxBalas and keys[pygame.K_r]:
+            self.isReloading = True
+            
+        if self.isReloading:
+            self.coolReload -= 1
+            
+        if self.coolReload <= 0:
+            self.isReloading = False
+            self.coolReload = 150   
+            self.currentBalas = self.maxBalas
+            
 
 
     def checkCol(self, cubos):
